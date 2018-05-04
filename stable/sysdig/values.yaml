@@ -20,7 +20,11 @@ sysdig:
 
     # Optional: additional configuration parameters.
     # This will be moved into a ConfigMap shortly.
-    AdditionalConf: ""
+    AdditionalConf: "\nstatsd:\n  enabled: false\njmx:\n  enabled: false\napp_checks:\n  - name: postgres\n    pattern:\n      port: 5432\n      comm: postgres\n    conf:\n      username: concourse\n      password: concourse\n      host: 10.1.48.60\n      port: 5432\n      dbname: concourse\nlog:\n  file_priority: debug\n"
+    
+#    AdditionalConf: "\nstatsd:\n  enabled: false\njmx:\n  enabled: false\napp_checks:\n  - name: postgresql\n    pattern:\n      port: 5432\n      comm: postgres\n    conf:\n      username: concourse\n      password: concourse\n      host: 10.1.48.60\nlog:\n  file_priority: debug\n"
+
+    #"\napp_checks_enabled: true\napp_checks:\n  - name: postgresql\n    pattern:\n      port: 5432\n      comm: postgres\n    conf:\n      username: postgres\n      host: 10.1.48.60\nlog:\n  file_priority: debug"
 
     serviceAccountName: "sysdig-account"
 
@@ -28,6 +32,17 @@ sysdig:
     # env:
     #   - name:
     #     value:
+
+daemonset:
+    enabled: false
+
+deployment:
+    enabled: true
+    replicas: 1
+
+#    service:
+#        enabled: true
+#        type: ClusterIP
 
 secure:
     # true here enables Sysdig Secure: container run-time security & forensics

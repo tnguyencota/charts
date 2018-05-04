@@ -1,21 +1,19 @@
-{{- if .Values.daemonset.enabled -}}
-{{- if .Values.sysdig.AccessKey }}
----
+{{- if .Values.deployment.enabled -}}
 apiVersion: extensions/v1beta1
-kind: DaemonSet
+kind: Deployment
 metadata:
   name: {{ template "fullname" . }}
   labels:
     app: {{ template "fullname" . }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
     release: "{{ .Release.Name }}"
-    heritage: "{{ .Release.Service }}"
 spec:
+  replicas: {{ .Values.deployment.replicas }}
   template:
     metadata:
-      name: {{ template "fullname" . }}
       labels:
         app: {{ template "fullname" . }}
+        type: deployment
     spec:
       volumes:
       - name: dshm
@@ -39,19 +37,12 @@ spec:
       - name: usr-vol
         hostPath:
           path: /usr
-      hostNetwork: true
-      hostPID: true
-      tolerations:
-{{ toYaml .Values.tolerations | indent 8 }}
-      {{- if .Values.rbac.install }}
-      serviceAccountName: {{ .Values.sysdig.serviceAccountName }}
-      {{- end }}
       containers:
       - name: {{ .Chart.Name }}
         image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
         imagePullPolicy: {{ .Values.image.pullPolicy }}
         resources:
-{{ toYaml .Values.resources | indent 12 }}
+{{ toYaml .Values.resources | indent 10 }}
         securityContext:
           privileged: true
         env:
@@ -95,5 +86,4 @@ spec:
           readOnly: true
         - mountPath: /dev/shm
           name: dshm
-{{- end }}
 {{- end -}}
